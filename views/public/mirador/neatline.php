@@ -38,6 +38,38 @@
                 bottomPanelAvailable: false,
                 bottomPanelVisible: false,
                 sidePanel: false,
+                <?PHP
+
+$arjson1 = json_decode(file_get_contents( absolute_url(array('things' => 'items', 'id' => $itemId), 'iiifitems_manifest')),true);
+
+$ch = $arjson1["sequences"][0]["canvases"][0]["height"];
+$cw = $arjson1["sequences"][0]["canvases"][0]["width"];
+$arjson2 = json_decode(file_get_contents(preg_replace("/manifest.json/", "annolist.json", absolute_url(array('things' => 'items', 'id' => $itemId), 'iiifitems_manifest'))),true);
+$aranoh = "";
+$aranoh = $arjson2["resources"][0]["on"][0]["selector"]["default"]["value"];
+if($aranoh != ""){
+list($z, $arano) = preg_split("/=/", $aranoh);
+list($ax,$ay,$aw,$ah) = preg_split("/,/", $arano);
+
+$pw = $aw / $cw + 0.1;
+$ph = $ah / $cw *2;
+$px = $ax / $cw - 0.05;
+$py = $ay / $cw - ($ah / $cw) / 2;
+
+if($pw > 1){$pw = 1;}
+if($py < 0){$py = 0.01;}
+if($ph > 1){$ph = 0.8;}
+print <<<prOsdBounds
+ "windowOptions": { "osdBounds": {
+"x": $px,
+"y": $py,
+"width": $pw,
+"height": $ph
+}},
+prOsdBounds;
+}
+?>
+                
                 annotationLayer: true
             }],
             "openManifestsPage": true,
